@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Task Status</h2>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 100%"></div>
+                </div>
+                
+                <div id="task-info">
+                    <p><strong>Status:</strong> <span id="task-state">{{ task.state }}</span></p>
+                    <p><strong>Message:</strong> <span id="task-status">{{ task.status }}</span></p>
+                    
+                    {% if task.state == 'FAILURE' %}
+                        <div class="alert alert-danger">
+                            {{ task.status }}
+                        </div>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">Try Again</a>
+                    {% endif %}
+                </div>
+                
+                {% if task.state == 'PROGRESS' or task.state == 'PENDING' %}
+                <script>
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

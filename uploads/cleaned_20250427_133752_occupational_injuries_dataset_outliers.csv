@@ -1,0 +1,251 @@
+worker_id,age,gender,industry,job_role,experience_years,safety_training,safety_equipment_used,shift,working_hours_per_week,environment_risk,injury_history,injury_occurred
+6,20,Male,Construction,Plumber,0,No,Yes,Night,66,Low,0,1
+15,41,Female,Agriculture,Irrigation Technician,7,Yes,Yes,Day,34,Low,1,0
+18,52,Female,Manufacturing,Assembler,8,No,Yes,Night,66,Low,2,1
+19,31,Male,Manufacturing,Welder,15,No,Yes,Day,44,Medium,0,0
+23,19,Male,Construction,Foreman,0,Yes,No,Night,35,High,0,1
+27,26,Female,Agriculture,Irrigation Technician,10,Yes,No,Night,53,Low,1,0
+30,36,Female,Agriculture,Irrigation Technician,12,Yes,No,Day,31,Low,0,0
+36,57,Male,Construction,Electrician,5,Yes,Yes,Day,68,Medium,1,0
+38,19,Female,Construction,Plumber,0,Yes,No,Day,30,Low,0,0
+43,58,Female,Mining,Driller,1,No,Yes,Night,37,Low,1,0
+49,23,Male,Healthcare,Lab Technician,4,Yes,Yes,Day,60,High,2,1
+60,56,Male,Manufacturing,Quality Inspector,3,No,No,Day,33,Medium,1,0
+61,52,Female,Construction,Plumber,9,No,No,Day,42,Medium,1,1
+64,42,Male,Agriculture,Harvester,9,No,No,Day,69,Medium,1,0
+69,54,Female,Agriculture,Irrigation Technician,9,No,Yes,Night,34,Medium,1,1
+70,36,Female,Manufacturing,Welder,0,No,No,Day,61,Low,1,1
+79,56,Male,Healthcare,Nurse,8,No,Yes,Day,61,Medium,1,0
+85,56,Female,Manufacturing,Assembler,4,No,Yes,Night,68,High,1,0
+88,59,Female,Mining,Surveyor,5,Yes,No,Night,38,Medium,1,1
+89,54,Male,Healthcare,Paramedic,6,No,Yes,Night,30,Medium,1,0
+93,58,Female,Manufacturing,Quality Inspector,7,No,No,Night,57,Medium,1,1
+102,46,Female,Construction,Electrician,10,No,No,Night,42,High,1,0
+103,22,Male,Healthcare,Paramedic,1,Yes,Yes,Day,59,Low,1,1
+105,28,Female,Healthcare,Lab Technician,0,No,Yes,Day,51,Low,1,1
+108,54,Female,Manufacturing,Technician,10,Yes,No,Night,39,Medium,1,0
+119,33,Female,Mining,Driller,1,No,No,Night,54,High,1,1
+130,25,Male,Mining,Machine Operator,11,Yes,No,Day,69,Medium,0,1
+135,57,Female,Agriculture,Farmer,5,No,No,Night,40,Medium,1,1
+180,59,Male,Mining,Machine Operator,1,No,Yes,Night,31,Medium,0,1
+193,56,Female,Construction,Electrician,6,No,No,Night,53,Medium,1,1
+197,57,Female,Healthcare,Lab Technician,0,Yes,Yes,Night,32,Medium,0,1
+206,52,Male,Manufacturing,Quality Inspector,0,No,Yes,Day,63,High,1,1
+218,40,Female,Agriculture,Irrigation Technician,3,No,Yes,Day,38,Low,2,0
+221,20,Female,Agriculture,Harvester,4,Yes,No,Night,32,Low,2,0
+228,24,Female,Mining,Driller,6,No,No,Day,34,Medium,1,1
+236,35,Female,Construction,Plumber,7,Yes,Yes,Day,43,Medium,2,1
+238,51,Female,Mining,Machine Operator,0,No,Yes,Day,58,Medium,1,0
+257,26,Female,Agriculture,Irrigation Technician,10,No,No,Day,37,Medium,1,0
+287,22,Male,Construction,Electrician,0,Yes,No,Night,31,Low,1,0
+310,22,Female,Manufacturing,Technician,2,No,No,Night,64,Low,1,0
+319,20,Female,Construction,Plumber,0,Yes,No,Day,32,Low,0,1
+329,40,Male,Healthcare,Nurse,6,No,No,Night,44,Low,2,0
+348,35,Male,Construction,Builder,8,Yes,No,Day,66,Medium,1,1
+375,33,Male,Healthcare,Paramedic,6,No,No,Night,32,Medium,1,1
+378,59,Female,Healthcare,Nurse,7,No,No,Night,55,Medium,1,1
+407,39,Female,Agriculture,Harvester,11,No,Yes,Night,35,Low,1,1
+412,44,Male,Construction,Plumber,9,No,Yes,Night,69,High,1,1
+419,57,Male,Manufacturing,Quality Inspector,12,No,Yes,Night,37,Medium,1,1
+426,28,Male,Healthcare,Nurse,5,No,Yes,Day,31,High,1,1
+432,37,Female,Healthcare,Paramedic,2,No,No,Day,30,Low,1,0
+442,50,Female,Agriculture,Irrigation Technician,10,No,No,Day,54,Medium,1,1
+466,26,Female,Healthcare,Lab Technician,9,No,No,Day,68,Medium,1,1
+474,21,Female,Healthcare,Lab Technician,0,No,Yes,Day,66,Low,1,1
+501,25,Male,Manufacturing,Technician,7,Yes,No,Night,30,Low,1,1
+503,47,Female,Agriculture,Harvester,11,No,Yes,Day,42,High,1,0
+512,48,Male,Healthcare,Paramedic,13,Yes,Yes,Day,43,High,1,0
+527,38,Female,Healthcare,Nurse,3,No,No,Day,30,High,1,1
+598,47,Female,Healthcare,Nurse,0,No,No,Day,68,Medium,1,0
+625,20,Male,Construction,Electrician,10,No,No,Day,30,Medium,1,0
+640,59,Female,Manufacturing,Welder,0,No,No,Night,30,Medium,0,1
+647,58,Female,Manufacturing,Quality Inspector,8,No,No,Day,48,High,1,1
+648,47,Female,Construction,Electrician,14,No,No,Night,69,Medium,0,1
+663,49,Female,Mining,Driller,9,No,No,Night,32,Low,1,1
+688,19,Male,Healthcare,Nurse,14,No,Yes,Day,65,High,0,0
+736,57,Male,Mining,Surveyor,2,No,No,Night,62,Medium,1,1
+769,26,Female,Manufacturing,Quality Inspector,7,Yes,Yes,Day,36,High,2,0
+834,36,Male,Mining,Driller,2,No,Yes,Day,68,High,1,1
+845,34,Female,Mining,Driller,12,Yes,No,Day,67,Low,1,1
+868,25,Male,Healthcare,Nurse,6,Yes,No,Night,54,High,2,0
+919,21,Male,Construction,Builder,9,Yes,No,Day,69,Medium,2,1
+932,22,Female,Mining,Driller,6,No,Yes,Night,34,Medium,1,1
+942,18,Female,Manufacturing,Technician,4,No,Yes,Night,33,Medium,2,0
+953,40,Female,Construction,Plumber,5,Yes,Yes,Day,44,Medium,2,0
+1069,52,Female,Healthcare,Lab Technician,7,Yes,No,Day,59,Medium,2,1
+1075,55,Female,Construction,Builder,9,Yes,No,Day,35,High,1,1
+1079,44,Female,Mining,Driller,1,No,No,Day,67,Medium,2,1
+1138,19,Female,Healthcare,Nurse,0,Yes,No,Day,43,Medium,2,1
+1144,56,Male,Agriculture,Farmer,4,No,No,Night,45,Low,2,1
+1146,31,Male,Agriculture,Harvester,3,No,Yes,Night,62,High,2,0
+1149,20,Female,Construction,Foreman,1,No,Yes,Day,42,Medium,1,1
+1156,47,Female,Agriculture,Irrigation Technician,5,Yes,No,Night,37,High,2,0
+1169,26,Male,Healthcare,Lab Technician,4,No,Yes,Night,42,High,2,1
+1175,48,Female,Mining,Machine Operator,1,Yes,Yes,Night,52,Medium,2,0
+1181,48,Male,Healthcare,Lab Technician,10,No,No,Day,66,High,1,1
+1190,59,Female,Manufacturing,Assembler,1,No,Yes,Day,68,Medium,2,1
+1198,49,Male,Agriculture,Harvester,4,Yes,No,Day,46,Low,2,0
+1204,50,Female,Construction,Foreman,3,No,No,Night,30,High,2,1
+1221,48,Female,Construction,Foreman,14,Yes,No,Day,32,Medium,1,0
+1239,54,Male,Construction,Builder,6,Yes,Yes,Day,69,Low,2,0
+1297,19,Female,Construction,Foreman,1,No,No,Day,65,Low,1,0
+1327,19,Male,Healthcare,Lab Technician,8,Yes,Yes,Night,30,Low,1,0
+1337,39,Male,Agriculture,Harvester,12,No,Yes,Day,52,Medium,1,1
+1343,56,Female,Construction,Builder,11,Yes,Yes,Night,49,Low,2,0
+1344,51,Female,Manufacturing,Assembler,8,No,No,Day,68,Medium,1,1
+1345,18,Female,Healthcare,Lab Technician,1,Yes,Yes,Night,57,Medium,1,1
+1460,53,Female,Agriculture,Irrigation Technician,4,No,Yes,Day,48,Low,2,0
+1481,46,Female,Mining,Machine Operator,0,No,Yes,Night,48,Low,2,1
+1488,50,Male,Manufacturing,Welder,6,Yes,No,Day,34,Low,2,0
+1548,59,Female,Healthcare,Lab Technician,5,No,No,Day,32,Medium,1,1
+1609,29,Female,Mining,Driller,3,No,No,Night,33,Medium,2,1
+1644,51,Male,Agriculture,Farmer,10,No,No,Day,53,Low,2,0
+1659,54,Male,Construction,Plumber,9,No,No,Day,67,Medium,2,1
+1665,23,Male,Manufacturing,Quality Inspector,0,No,Yes,Day,58,Medium,2,0
+1700,19,Female,Healthcare,Paramedic,3,No,No,Day,32,Medium,1,1
+1707,58,Female,Healthcare,Nurse,1,No,Yes,Day,52,Medium,2,1
+1711,59,Male,Construction,Builder,0,No,Yes,Day,32,Low,1,0
+1727,52,Female,Manufacturing,Quality Inspector,10,No,Yes,Night,66,Medium,1,0
+1825,49,Female,Manufacturing,Technician,0,Yes,No,Day,64,Medium,1,1
+1842,38,Male,Healthcare,Lab Technician,6,Yes,No,Night,45,Medium,2,0
+1876,26,Female,Agriculture,Irrigation Technician,10,Yes,No,Night,59,High,2,1
+1878,33,Male,Manufacturing,Quality Inspector,6,Yes,Yes,Day,34,Medium,2,1
+1940,26,Female,Mining,Surveyor,2,Yes,Yes,Night,38,Low,2,0
+1952,33,Male,Agriculture,Harvester,5,Yes,Yes,Day,48,High,2,0
+1979,36,Female,Manufacturing,Welder,9,No,No,Night,35,Medium,1,1
+1985,56,Male,Healthcare,Nurse,0,Yes,Yes,Night,58,Low,1,1
+1999,39,Male,Manufacturing,Quality Inspector,6,Yes,Yes,Day,64,Medium,2,0
+2009,31,Female,Mining,Blaster,7,Yes,No,Day,35,Medium,2,0
+2092,54,Female,Construction,Plumber,10,Yes,Yes,Day,67,Low,1,0
+2124,59,Female,Manufacturing,Assembler,3,No,Yes,Day,31,High,1,0
+2156,24,Female,Manufacturing,Quality Inspector,9,No,No,Day,36,High,2,1
+2168,40,Female,Mining,Surveyor,11,No,No,Day,69,Medium,1,1
+2172,37,Female,Agriculture,Farmer,9,Yes,Yes,Night,64,Medium,1,1
+2191,40,Male,Agriculture,Farmer,0,Yes,Yes,Night,31,Medium,1,1
+2361,25,Male,Construction,Electrician,6,Yes,Yes,Night,61,High,2,1
+2430,22,Female,Mining,Driller,2,Yes,Yes,Night,57,Low,2,0
+2464,58,Female,Manufacturing,Welder,3,Yes,Yes,Day,69,Medium,1,0
+2472,22,Female,Agriculture,Farmer,0,Yes,No,Day,48,Low,2,0
+2531,43,Male,Healthcare,Paramedic,6,Yes,No,Night,34,High,2,0
+2561,25,Male,Mining,Blaster,1,Yes,No,Day,32,Medium,1,1
+2589,36,Male,Construction,Builder,6,Yes,Yes,Day,60,Low,2,0
+2622,45,Female,Mining,Machine Operator,0,Yes,Yes,Night,67,Medium,1,1
+2674,59,Female,Mining,Surveyor,0,No,No,Night,34,High,1,1
+2687,37,Female,Healthcare,Paramedic,0,Yes,No,Night,48,Medium,2,0
+2688,27,Female,Healthcare,Nurse,12,Yes,Yes,Day,67,Low,1,0
+2727,49,Female,Manufacturing,Welder,4,No,No,Day,65,Medium,3,1
+2795,24,Male,Manufacturing,Welder,0,Yes,Yes,Night,69,Low,1,1
+2839,58,Female,Mining,Driller,9,No,Yes,Day,44,Medium,1,1
+2869,59,Male,Construction,Foreman,1,Yes,Yes,Night,45,Low,2,1
+2882,55,Male,Mining,Machine Operator,7,Yes,Yes,Night,31,High,1,1
+2914,53,Male,Mining,Blaster,6,Yes,No,Day,30,High,1,1
+2924,42,Male,Agriculture,Irrigation Technician,2,No,Yes,Day,52,Low,3,1
+2927,33,Female,Manufacturing,Welder,4,No,No,Day,37,High,2,0
+2934,35,Male,Agriculture,Harvester,7,No,No,Night,32,Medium,2,1
+3013,21,Male,Construction,Electrician,2,Yes,No,Day,36,High,1,1
+3023,43,Female,Agriculture,Farmer,6,Yes,Yes,Day,38,High,2,1
+3039,18,Male,Manufacturing,Assembler,1,Yes,Yes,Day,65,Medium,1,0
+3091,18,Female,Healthcare,Nurse,4,Yes,Yes,Day,46,Medium,2,0
+3094,40,Male,Mining,Driller,0,Yes,No,Night,69,High,1,1
+3198,28,Female,Mining,Blaster,7,No,No,Day,55,Low,2,1
+3207,31,Male,Manufacturing,Welder,4,No,No,Day,50,Low,2,1
+3292,59,Female,Construction,Builder,5,Yes,Yes,Day,66,High,1,1
+3294,49,Male,Healthcare,Paramedic,4,Yes,Yes,Night,44,Medium,2,0
+3353,48,Female,Agriculture,Farmer,3,No,No,Day,67,Low,2,0
+3391,21,Female,Agriculture,Harvester,2,No,Yes,Night,30,Medium,1,1
+3411,20,Male,Manufacturing,Technician,3,No,Yes,Night,67,Medium,1,1
+3479,18,Male,Mining,Driller,5,No,No,Night,62,Medium,1,1
+3517,50,Male,Healthcare,Nurse,7,No,No,Night,61,High,2,1
+3524,43,Female,Mining,Machine Operator,3,No,Yes,Day,31,Medium,1,1
+3529,45,Female,Manufacturing,Technician,2,Yes,Yes,Day,46,High,2,0
+3541,59,Female,Healthcare,Lab Technician,2,Yes,No,Day,31,High,1,1
+3552,40,Female,Healthcare,Paramedic,5,Yes,Yes,Night,61,Medium,2,0
+3574,58,Male,Manufacturing,Welder,2,Yes,No,Night,55,Medium,1,1
+3579,50,Male,Construction,Electrician,10,Yes,No,Night,52,Medium,1,1
+3594,18,Female,Construction,Foreman,7,Yes,No,Day,30,Medium,1,0
+3598,38,Male,Healthcare,Lab Technician,3,No,No,Day,42,High,2,1
+3611,46,Male,Manufacturing,Assembler,8,No,No,Day,68,Medium,1,1
+3655,24,Female,Manufacturing,Technician,9,No,No,Night,32,Low,2,0
+3660,20,Female,Manufacturing,Technician,1,Yes,No,Day,60,Low,1,1
+3677,29,Female,Manufacturing,Quality Inspector,11,No,No,Day,39,Medium,2,1
+3689,43,Male,Manufacturing,Welder,0,Yes,No,Night,32,Low,1,1
+3700,46,Male,Agriculture,Harvester,0,Yes,Yes,Night,65,Low,1,1
+3708,56,Male,Construction,Builder,8,No,Yes,Night,61,Medium,1,1
+3709,42,Female,Agriculture,Harvester,5,Yes,Yes,Day,39,Medium,3,0
+3825,19,Male,Healthcare,Paramedic,8,Yes,Yes,Night,45,Medium,1,1
+3832,33,Male,Mining,Blaster,9,No,Yes,Day,35,High,1,1
+3838,22,Male,Healthcare,Lab Technician,4,No,No,Night,67,High,3,0
+3854,20,Female,Manufacturing,Technician,0,Yes,No,Day,39,High,1,1
+3857,56,Male,Agriculture,Harvester,9,No,Yes,Night,53,Medium,2,1
+3886,58,Female,Construction,Foreman,8,Yes,Yes,Day,41,Medium,1,1
+3920,25,Male,Mining,Driller,0,No,No,Night,63,High,1,0
+3921,50,Male,Construction,Plumber,3,Yes,No,Night,34,Low,1,1
+3924,19,Male,Healthcare,Nurse,1,No,No,Day,68,Medium,1,1
+3935,54,Female,Healthcare,Lab Technician,0,No,Yes,Night,57,Medium,1,1
+3938,24,Male,Manufacturing,Quality Inspector,7,Yes,No,Day,36,Medium,2,0
+4012,59,Male,Mining,Blaster,3,No,Yes,Night,62,Medium,2,0
+4023,42,Male,Construction,Builder,11,Yes,No,Night,67,Medium,1,0
+4043,59,Female,Construction,Electrician,0,No,No,Day,33,Medium,1,1
+4076,47,Female,Healthcare,Paramedic,4,Yes,Yes,Day,60,Medium,3,1
+4116,21,Male,Agriculture,Irrigation Technician,0,No,No,Day,59,Low,1,1
+4137,39,Male,Mining,Machine Operator,12,Yes,Yes,Night,49,High,1,1
+4142,18,Male,Agriculture,Harvester,6,Yes,Yes,Day,64,Low,2,0
+4153,24,Male,Mining,Surveyor,1,No,No,Day,48,Medium,1,1
+4161,35,Male,Manufacturing,Assembler,5,Yes,No,Night,40,High,2,0
+4166,22,Male,Healthcare,Lab Technician,10,Yes,No,Night,34,Medium,1,1
+4172,30,Male,Mining,Blaster,0,No,Yes,Night,66,Low,1,0
+4178,58,Male,Manufacturing,Technician,0,Yes,No,Night,40,Medium,3,1
+4201,19,Male,Manufacturing,Technician,0,Yes,No,Day,31,Medium,1,1
+4214,48,Female,Healthcare,Lab Technician,2,Yes,No,Day,68,Medium,1,0
+4227,41,Male,Healthcare,Lab Technician,3,Yes,Yes,Night,43,Medium,2,0
+4259,20,Male,Manufacturing,Welder,9,No,Yes,Night,47,Medium,1,0
+4279,57,Female,Mining,Driller,8,No,Yes,Night,66,High,1,1
+4285,39,Female,Manufacturing,Welder,10,Yes,No,Night,32,High,2,0
+4293,31,Female,Agriculture,Harvester,0,No,No,Night,60,Medium,1,1
+4313,31,Male,Construction,Electrician,2,No,No,Day,66,High,1,1
+4322,21,Female,Healthcare,Lab Technician,7,Yes,Yes,Day,67,High,1,0
+4342,57,Male,Healthcare,Paramedic,8,Yes,Yes,Day,58,Medium,1,1
+4363,46,Female,Agriculture,Harvester,10,Yes,No,Night,60,Low,1,1
+4399,59,Female,Mining,Machine Operator,2,Yes,Yes,Day,68,Medium,0,1
+4418,18,Male,Manufacturing,Assembler,5,No,Yes,Night,34,Low,1,1
+4421,34,Female,Healthcare,Nurse,11,Yes,No,Night,45,Medium,1,1
+4430,22,Female,Healthcare,Lab Technician,3,Yes,No,Night,37,Low,1,1
+4433,18,Female,Mining,Driller,9,Yes,No,Day,40,High,1,1
+4443,49,Male,Mining,Blaster,1,Yes,No,Night,62,Medium,1,1
+4488,53,Female,Construction,Electrician,0,No,No,Night,42,Low,2,1
+4499,20,Male,Agriculture,Harvester,7,No,No,Night,65,Medium,1,1
+4510,40,Male,Mining,Surveyor,5,No,Yes,Night,40,Medium,2,1
+4568,50,Female,Agriculture,Farmer,10,No,No,Day,56,High,2,0
+4579,23,Male,Manufacturing,Assembler,9,No,Yes,Night,36,Low,1,0
+4590,47,Male,Mining,Driller,3,Yes,No,Day,66,High,1,1
+4609,55,Female,Construction,Plumber,0,No,No,Day,44,Medium,2,0
+4643,59,Female,Manufacturing,Technician,3,No,No,Night,36,High,1,1
+4657,20,Female,Agriculture,Irrigation Technician,8,No,No,Night,58,Low,1,1
+4659,59,Male,Agriculture,Irrigation Technician,12,No,No,Night,57,Low,0,1
+4683,56,Male,Healthcare,Nurse,6,No,Yes,Day,51,Medium,1,1
+4685,20,Female,Construction,Builder,6,Yes,No,Day,36,Medium,2,1
+4686,59,Male,Manufacturing,Quality Inspector,11,Yes,No,Day,48,Medium,1,0
+4701,32,Male,Manufacturing,Technician,5,No,No,Night,40,High,2,1
+4706,26,Male,Mining,Surveyor,8,Yes,Yes,Day,33,Low,1,0
+4712,35,Male,Construction,Electrician,8,Yes,No,Day,67,Medium,1,1
+4714,36,Female,Manufacturing,Assembler,10,Yes,No,Day,45,High,1,0
+4717,46,Female,Agriculture,Harvester,9,No,Yes,Night,40,Medium,2,0
+4740,57,Male,Mining,Driller,3,Yes,No,Day,43,Low,2,0
+4753,43,Male,Construction,Plumber,0,Yes,Yes,Night,39,Medium,1,1
+4767,43,Female,Mining,Surveyor,0,No,Yes,Day,51,Medium,1,1
+4778,54,Male,Manufacturing,Assembler,0,Yes,No,Night,40,High,1,1
+4782,21,Female,Construction,Foreman,6,No,No,Day,34,Medium,1,1
+4784,55,Female,Manufacturing,Assembler,9,No,No,Day,66,High,1,0
+4811,44,Female,Healthcare,Paramedic,5,No,Yes,Day,61,High,2,1
+4819,30,Male,Construction,Electrician,11,Yes,Yes,Night,34,Low,0,1
+4825,51,Male,Agriculture,Farmer,4,No,No,Day,34,Low,1,1
+4873,49,Female,Agriculture,Irrigation Technician,8,Yes,Yes,Night,41,High,2,1
+4874,54,Male,Construction,Plumber,5,Yes,Yes,Day,58,Low,1,1
+4881,30,Male,Mining,Machine Operator,1,No,No,Night,66,Low,1,1
+4899,18,Male,Agriculture,Irrigation Technician,0,Yes,Yes,Night,61,Medium,1,0
+4916,51,Female,Mining,Machine Operator,2,No,Yes,Day,52,Low,1,1
+4928,47,Male,Healthcare,Paramedic,0,No,No,Day,30,Medium,0,1
+4947,21,Female,Mining,Surveyor,1,No,No,Day,55,Medium,1,1
+4975,31,Female,Construction,Foreman,0,Yes,No,Day,67,Medium,1,0
+4996,43,Female,Mining,Surveyor,6,Yes,Yes,Night,43,Medium,2,0
+5000,26,Male,Construction,Plumber,5,No,No,Night,61,Low,1,1

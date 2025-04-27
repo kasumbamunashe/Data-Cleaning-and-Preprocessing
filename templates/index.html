@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">Data Cleaning System</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Upload Data File (CSV, Excel, JSON)</label>
+                        <input class="form-control" type="file" id="file" name="file" required>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="impute_strategy" class="form-label">Missing Value Strategy</label>
+                            <select class="form-select" id="impute_strategy" name="impute_strategy">
+                                <option value="knn" selected>KNN Imputation</option>
+                                <option value="mean">Mean Imputation</option>
+                                <option value="median">Median Imputation</option>
+                                <option value="drop">Drop Rows</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contamination" class="form-label">Outlier Sensitivity (0-0.5)</label>
+                            <input type="number" class="form-control" id="contamination" name="contamination" 
+                                   min="0" max="0.5" step="0.01" value="0.05">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="output_format" class="form-label">Output Format</label>
+                        <select class="form-select" id="output_format" name="output_format">
+                            <option value="csv" selected>CSV</option>
+                            <option value="excel">Excel</option>
+                            <option value="json">JSON</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Process Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3>API Documentation</h3>
+            </div>
+            <div class="card-body">
+                <p>You can also use our REST API:</p>
+                <pre><code>POST /api/clean
+Content-Type: multipart/form-data
+
+Parameters:
+- file: Data file to process
+- contamination: Outlier sensitivity (optional)
+- impute_strategy: Missing value strategy (optional)
+- output_format: Desired output format (optional)</code></pre>
+                <a href="/api/docs" class="btn btn-outline-secondary">View Full API Docs</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
