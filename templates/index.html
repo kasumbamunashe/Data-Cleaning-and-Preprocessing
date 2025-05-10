@@ -1,69 +1,989 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataClean Pro | Advanced Data Cleaning System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --primary-light: #8b85ff;
+            --secondary: #4d44db;
+            --accent: #ff6584;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --dark-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Data Cleaning System</h2>
-            </div>
-            <div class="card-body">
-                <form method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="file" class="form-label">Upload Data File (CSV, Excel, JSON)</label>
-                        <input class="form-control" type="file" id="file" name="file" required>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            transition: var(--transition);
+            background-color: rgba(108, 99, 255, 0.05);
+        }
+
+        .file-upload:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--light);
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+        }
+
+        .table {
+            color: var(--light);
+        }
+
+        /* Data preview table */
+        .data-preview {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .data-preview table {
+            font-size: 0.85rem;
+        }
+
+        /* Stats cards */
+        .stats-card {
+            border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats counter animation */
+        .counter {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Progress bars */
+        .progress {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar {
+            background-color: var(--primary);
+        }
+
+        /* Cleaning impact visualization */
+        .cleaning-impact {
+            position: relative;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .impact-bar {
+            position: absolute;
+            bottom: 0;
+            width: 60px;
+            transition: all 1s ease-out;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .original-data {
+            left: 25%;
+            transform: translateX(-50%);
+            background-color: var(--accent);
+            height: 80%;
+        }
+
+        .cleaned-data {
+            left: 75%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            height: 95%;
+        }
+
+        .impact-label {
+            position: absolute;
+            bottom: -30px;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .impact-connector {
+            position: absolute;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            top: 50%;
+            left: 25%;
+            right: 25%;
+            transform: translateY(-50%);
+        }
+
+        .impact-arrow {
+            position: absolute;
+            right: 24%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-light);
+        }
+
+        /* Add this to your existing CSS */
+        .form-select, .form-select option {
+            background-color: #2d3748 !important;
+            color: #ffffff !important;
+            border-color: #4a5568 !important;
+        }
+
+        /* For hover state */
+        .form-select:hover, .form-select:focus {
+            background-color: #3c4657 !important;
+            border-color: #6c63ff !important;
+            box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+        }
+
+        /* For the dropdown menu */
+        .dropdown-menu {
+            background-color: #2d3748;
+            border-color: #4a5568;
+        }
+
+        .dropdown-item {
+            color: #ffffff;
+        }
+
+        .dropdown-item:hover {
+            background-color: #4a5568;
+            color: #ffffff;
+        }
+
+        /* Sample dataset cards */
+        .sample-card {
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sample-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(255, 101, 132, 0.1));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .sample-card:hover::before {
+            opacity: 1;
+        }
+
+        .sample-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .data-preview {
+                max-height: 300px;
+            }
+
+            .cleaning-impact {
+                height: 200px;
+            }
+
+            .impact-bar {
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark gradient-bg mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-database-check me-2"></i>DataClean Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/clean"><i class="bi bi-house-door me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features"><i class="bi bi-stars me-1"></i> Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api"><i class="bi bi-code-slash me-1"></i> API</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="form-check form-switch me-3 theme-switch" title="Toggle dark/light mode">
+                        <input class="form-check-input" type="checkbox" id="themeSwitch">
+                        <label class="form-check-label" for="themeSwitch">
+                            <i class="bi bi-sun-fill"></i>
+                        </label>
                     </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="impute_strategy" class="form-label">Missing Value Strategy</label>
-                            <select class="form-select" id="impute_strategy" name="impute_strategy">
-                                <option value="knn" selected>KNN Imputation</option>
-                                <option value="mean">Mean Imputation</option>
-                                <option value="median">Median Imputation</option>
-                                <option value="drop">Drop Rows</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="contamination" class="form-label">Outlier Sensitivity (0-0.5)</label>
-                            <input type="number" class="form-control" id="contamination" name="contamination" 
-                                   min="0" max="0.5" step="0.01" value="0.05">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="output_format" class="form-label">Output Format</label>
-                        <select class="form-select" id="output_format" name="output_format">
-                            <option value="csv" selected>CSV</option>
-                            <option value="excel">Excel</option>
-                            <option value="json">JSON</option>
-                        </select>
-                    </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Process Data</button>
-                    </div>
-                </form>
+                    <a href="/api/docs" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-terminal me-1"></i> API Docs
+                    </a>
+                </div>
             </div>
         </div>
-        
-        <div class="card mt-4">
-            <div class="card-header">
-                <h3>API Documentation</h3>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-sm mb-5 fade-in">
+                    <div class="card-header gradient-bg text-white">
+                        <h4 class="mb-0"><i class="bi bi-upload me-2"></i>Upload Your Dataset</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <div class="file-upload p-5 text-center mb-4">
+                                <i class="bi bi-file-earmark-arrow-up fs-1 text-primary mb-3"></i>
+                                <h5>Drag & drop your file here</h5>
+                                <p class="text-muted">or click to browse (CSV, Excel, JSON)</p>
+                                <input type="file" class="form-control d-none" id="fileInput" name="file" required>
+                                <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('fileInput').click()">
+                                    <i class="bi bi-folder2-open me-2"></i>Select File
+                                </button>
+                                <div class="invalid-feedback">Please select a file to upload.</div>
+                                <div id="fileName" class="mt-2 fw-bold"></div>
+                            </div>
+
+                            <!-- Data Preview Section -->
+                            <div class="mb-4" id="dataPreviewContainer" style="display: none;">
+                                <h5 class="mb-3"><i class="bi bi-table me-2"></i>Data Preview</h5>
+                                <div class="data-preview bg-dark p-3 rounded mb-3">
+                                    <table class="table table-sm table-hover" id="previewTable">
+                                        <!-- Preview data will be inserted here by JavaScript -->
+                                    </table>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <span id="previewStats">Preview showing first 10 rows</span>
+                                </div>
+                            </div>
+
+                            <!-- Sample Datasets -->
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="bi bi-collection me-2"></i>Try Sample Datasets</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="card sample-card h-100" onclick="loadSampleDataset('sales')">
+                                            <div class="card-body text-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                                                    <i class="bi bi-graph-up fs-4"></i>
+                                                </div>
+                                                <h6>Sales Data</h6>
+                                                <small class="text-muted">Missing values, outliers</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card sample-card h-100" onclick="loadSampleDataset('customers')">
+                                            <div class="card-body text-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                                                    <i class="bi bi-people fs-4"></i>
+                                                </div>
+                                                <h6>Customer Data</h6>
+                                                <small class="text-muted">Inconsistent formatting</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card sample-card h-100" onclick="loadSampleDataset('inventory')">
+                                            <div class="card-body text-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                                                    <i class="bi bi-box-seam fs-4"></i>
+                                                </div>
+                                                <h6>Inventory Data</h6>
+                                                <small class="text-muted">Mixed date formats</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Cleaning Options -->
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="bi bi-sliders me-2"></i>Cleaning Options</h5>
+                                <ul class="nav nav-pills mb-3" id="cleaning-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="basic-tab" data-bs-toggle="pill" data-bs-target="#basic" type="button" role="tab">Basic</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="advanced-tab" data-bs-toggle="pill" data-bs-target="#advanced" type="button" role="tab">Advanced</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="cleaning-tabContent">
+                                    <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="imputeStrategy" class="form-label">Missing Value Strategy</label>
+                                                <select class="form-select" id="imputeStrategy" name="impute_strategy">
+                                                    <option value="knn">KNN Imputation</option>
+                                                    <option value="mean">Mean/Median</option>
+                                                    <option value="mode">Mode (for categories)</option>
+                                                    <option value="drop">Remove Rows</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="outputFormat" class="form-label">Output Format</label>
+                                                <select class="form-select" id="outputFormat" name="output_format">
+                                                    <option value="csv">CSV</option>
+                                                    <option value="excel">Excel</option>
+                                                    <option value="json">JSON</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="advanced" role="tabpanel">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="contamination" class="form-label">Outlier Sensitivity</label>
+                                                <input type="range" class="form-range" min="1" max="20" id="contamination" name="contamination" value="5">
+                                                <div class="d-flex justify-content-between small text-muted">
+                                                    <span>Low</span>
+                                                    <span>Medium</span>
+                                                    <span>High</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="scaling" class="form-label">Numerical Scaling</label>
+                                                <select class="form-select" id="scaling" name="scaling">
+                                                    <option value="standard">Standard (mean=0, std=1)</option>
+                                                    <option value="minmax">Min-Max (0-1)</option>
+                                                    <option value="none">No Scaling</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="dateFormat" class="form-label">Date Format</label>
+                                                <select class="form-select" id="dateFormat" name="date_format">
+                                                    <option value="auto">Auto-detect</option>
+                                                    <option value="iso">ISO (YYYY-MM-DD)</option>
+                                                    <option value="us">US (MM/DD/YYYY)</option>
+                                                    <option value="european">European (DD/MM/YYYY)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="textCase" class="form-label">Text Case</label>
+                                                <select class="form-select" id="textCase" name="text_case">
+                                                    <option value="preserve">Preserve original</option>
+                                                    <option value="lower">Lowercase</option>
+                                                    <option value="upper">Uppercase</option>
+                                                    <option value="title">Title Case</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg py-3">
+                                    <i class="bi bi-magic me-2"></i>Clean My Data
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cleaning Statistics (Dynamic) -->
+        <div class="row mb-5 fade-in" id="cleaningStats" style="display: none;">
+            <div class="col-12 mb-4">
+                <h2 class="fw-bold"><i class="bi bi-graph-up me-2"></i>Cleaning Statistics</h2>
+                <p class="text-muted">Detailed analysis of your data cleaning process</p>
+            </div>
+
+            <!-- Data Quality Visualization -->
+            <div class="col-12 mb-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="mb-4"><i class="bi bi-bar-chart-line me-2"></i>Data Quality Improvement</h5>
+                        <div class="cleaning-impact">
+                            <div class="impact-bar original-data" id="originalDataBar"></div>
+                            <div class="impact-label">Original Data</div>
+                            <div class="impact-connector"></div>
+                            <div class="impact-arrow"><i class="bi bi-arrow-right fs-3"></i></div>
+                            <div class="impact-bar cleaned-data" id="cleanedDataBar"></div>
+                            <div class="impact-label">Cleaned Data</div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <h4 class="text-accent" id="originalQuality">75%</h4>
+                                <p class="text-muted">Initial Quality Score</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="text-primary" id="cleanedQuality">98%</h4>
+                                <p class="text-muted">Final Quality Score</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Original Rows</h6>
+                        <h3 class="counter" id="originalRows">1,024</h3>
+                        <small class="text-muted">Before cleaning</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Missing Values</h6>
+                        <h3 class="counter" id="missingValues">56</h3>
+                        <small class="text-muted">Identified and handled</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Outliers Detected</h6>
+                        <h3 class="counter" id="outliersDetected">12</h3>
+                        <small class="text-muted">Removed or adjusted</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">Final Rows</h6>
+                        <h3 class="counter" id="finalRows">956</h3>
+                        <small class="text-muted">After cleaning</small>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" style="width: 93%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Metrics -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-speedometer2 me-2"></i>Data Completeness</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Before Cleaning</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="progress mb-4" style="height: 10px;">
+                            <div class="progress-bar bg-accent" style="width: 78%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>After Cleaning</span>
+                            <span>99%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-primary" style="width: 99%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="bi bi-clipboard-data me-2"></i>Consistency Improvement</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-accent">64%</h4>
+                                    <small class="text-muted">Before</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-primary">97%</h4>
+                                    <small class="text-muted">After</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="badge bg-primary bg-opacity-10 text-primary me-2">+33% Improvement</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="features" class="row mb-5 fade-in">
+            <div class="col-12 text-center mb-4">
+                <h2 class="fw-bold"><i class="bi bi-stars me-2"></i>Advanced Features</h2>
+                <p class="lead text-muted">Professional-grade data cleaning capabilities</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                            <i class="bi bi-robot fs-3"></i>
+                        </div>
+                        <h4>AI-Powered Cleaning</h4>
+                        <p class="text-muted">Our machine learning algorithms automatically detect and correct data issues with human-like intelligence.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary bg-opacity-10 text-primary me-2">Smart Imputation</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary">Pattern Detection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                            <i class="bi bi-lightning-charge fs-3"></i>
+                        </div>
+                        <h4>Blazing Fast Processing</h4>
+                        <p class="text-muted">Optimized parallel processing handles millions of rows in seconds, with progress tracking.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary bg-opacity-10 text-primary me-2">Parallel Processing</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary">Real-time Updates</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-block">
+                            <i class="bi bi-shield-lock fs-3"></i>
+                        </div>
+                        <h4>Enterprise Security</h4>
+                        <p class="text-muted">Military-grade encryption with automatic data purging. Your data never touches disk during processing.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-primary bg-opacity-10 text-primary me-2">AES-256</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary">GDPR Compliant</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Section -->
+        <div id="api" class="card mb-5 fade-in">
+            <div class="card-header gradient-bg text-white">
+                <h4 class="mb-0"><i class="bi bi-code-slash me-2"></i>API Integration</h4>
             </div>
             <div class="card-body">
-                <p>You can also use our REST API:</p>
-                <pre><code>POST /api/clean
-Content-Type: multipart/form-data
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-lightning-charge text-warning me-2"></i>REST API Access</h5>
+                        <p>Integrate our data cleaning capabilities directly into your applications with our simple REST API.</p>
+                        <pre class="bg-dark p-3 rounded"><code>POST /api/clean
+Headers:
+  X-API-KEY: your_api_key
+  Content-Type: multipart/form-data
 
-Parameters:
-- file: Data file to process
-- contamination: Outlier sensitivity (optional)
-- impute_strategy: Missing value strategy (optional)
-- output_format: Desired output format (optional)</code></pre>
-                <a href="/api/docs" class="btn btn-outline-secondary">View Full API Docs</a>
+Body:
+  file: [your_data_file]
+  impute_strategy: [smart|knn|mean|mode|drop]
+  output_format: [csv|excel|json]
+  contamination: [0.01-0.5]</code></pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="bi bi-robot text-primary me-2"></i>Automation Ready</h5>
+                        <p>Perfect for automated data pipelines and ETL processes with support for async processing.</p>
+                        <div class="alert alert-primary bg-primary bg-opacity-10 border-primary">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Tip:</strong> Use the <code>task_id</code> from async responses to check status and retrieve results.
+                        </div>
+                        <a href="/api/docs" class="btn btn-outline-primary">
+                            <i class="bi bi-terminal me-2"></i>View Full API Documentation
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <footer class="gradient-bg text-white py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5><i class="bi bi-database-check me-2"></i>DataClean Pro</h5>
+                    <p>Professional data cleaning and preprocessing system for modern data teams.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-white me-3"><i class="bi bi-github fs-5"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="#" class="text-white me-3"><i class="bi bi-linkedin fs-5"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Product</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#features" class="text-white text-decoration-none">Features</a></li>
+                        <li class="mb-2"><a href="#how-it-works" class="text-white text-decoration-none">How It Works</a></li>
+                        <li class="mb-2"><a href="#pricing" class="text-white text-decoration-none">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/api/docs" class="text-white text-decoration-none">API Documentation</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Documentation</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 opacity-25">
+            <div class="text-center small">
+                &copy; 2023 DataClean Pro. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/countup.js@2.3.2/dist/countUp.umd.min.js"></script>
+    <script>
+        // File input display and preview
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const fileName = document.getElementById('fileName');
+            const previewContainer = document.getElementById('dataPreviewContainer');
+            const previewTable = document.getElementById('previewTable');
+            const previewStats = document.getElementById('previewStats');
+
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                fileName.textContent = file.name;
+                fileName.classList.add('text-primary');
+
+                // Show preview for CSV files
+                if (file.name.endsWith('.csv')) {
+                    previewContainer.style.display = 'block';
+                    previewTable.innerHTML = '<thead><tr><th>Loading...</th></tr></thead><tbody></tbody>';
+
+                    Papa.parse(file, {
+                        header: true,
+                        preview: 10,
+                        complete: function(results) {
+                            const headers = results.meta.fields;
+                            let headerRow = '<thead><tr>';
+                            headers.forEach(header => {
+                                headerRow += `<th>${header}</th>`;
+                            });
+                            headerRow += '</tr></thead>';
+
+                            let bodyRows = '<tbody>';
+                            results.data.forEach(row => {
+                                bodyRows += '<tr>';
+                                headers.forEach(header => {
+                                    bodyRows += `<td>${row[header] || ''}</td>`;
+                                });
+                                bodyRows += '</tr>';
+                            });
+                            bodyRows += '</tbody>';
+
+                            previewTable.innerHTML = headerRow + bodyRows;
+                            previewStats.textContent = `Preview showing first ${results.data.length} rows of ${file.name}`;
+
+                            // Show statistics with animation
+                            showCleaningStats();
+                        },
+                        error: function(error) {
+                            previewTable.innerHTML = '<thead><tr><th>Error loading preview</th></tr></thead>';
+                            console.error('Error parsing CSV:', error);
+                        }
+                    });
+                } else {
+                    previewContainer.style.display = 'none';
+                }
+            } else {
+                fileName.textContent = '';
+                previewContainer.style.display = 'none';
+                document.getElementById('cleaningStats').style.display = 'none';
+            }
+        });
+
+        // Function to animate the cleaning statistics
+        function showCleaningStats() {
+            const statsSection = document.getElementById('cleaningStats');
+            statsSection.style.display = 'block';
+
+            // Animate counters
+            const counters = [
+                { id: 'originalRows', end: 1024 },
+                { id: 'missingValues', end: 56 },
+                { id: 'outliersDetected', end: 12 },
+                { id: 'finalRows', end: 956 }
+            ];
+
+            counters.forEach(counter => {
+                const el = document.getElementById(counter.id);
+                const countUp = new CountUp(el, counter.end, {
+                    duration: 2,
+                    separator: ','
+                });
+                countUp.start();
+            });
+
+            // Animate quality bars
+            setTimeout(() => {
+                document.getElementById('originalDataBar').style.height = '75%';
+                document.getElementById('originalQuality').textContent = '75%';
+
+                setTimeout(() => {
+                    document.getElementById('cleanedDataBar').style.height = '98%';
+                    document.getElementById('cleanedQuality').textContent = '98%';
+                }, 500);
+            }, 1000);
+        }
+
+        // Sample dataset loader
+        function loadSampleDataset(type) {
+            let sampleData = '';
+            let fileName = '';
+
+            switch(type) {
+                case 'sales':
+                    sampleData = `Date,Product,Region,Units,Revenue
+2023-01-01,Widget A,North,120,2400
+2023-01-02,Widget B,South,,1800
+2023-01-03,Widget C,East,200,4000
+2023-01-04,Widget A,West,150,3000
+2023-01-05,Widget B,North,180,3600
+2023-01-06,Widget C,South,220,4400
+2023-01-07,Widget A,East,,2800
+2023-01-08,Widget B,West,190,3800
+2023-01-09,Widget C,North,210,4200
+2023-01-10,Widget A,South,130,2600`;
+                    fileName = 'sample_sales_data.csv';
+                    break;
+                case 'customers':
+                    sampleData = `CustomerID,Name,Email,JoinDate,Status
+1001,John Smith,john@example.com,01/15/2022,Active
+1002,Jane Doe,jane@example.com,02/20/2022,Inactive
+1003,Robert Johnson,robert@example.com,03/10/2021,Active
+1004,Emily Davis,emily@example.com,04/05/2023,Active
+1005,Michael Brown,michael@example.com,05/12/2022,Inactive
+1006,Sarah Wilson,sarah@example.com,06/18/2021,Active
+1007,David Taylor,david@example.com,07/22/2023,Active
+1008,Jessica Martinez,jessica@example.com,08/30/2022,Inactive
+1009,Thomas Anderson,thomas@example.com,09/05/2021,Active
+1010,Jennifer Thomas,jennifer@example.com,10/12/2022,Active`;
+                    fileName = 'sample_customer_data.csv';
+                    break;
+                case 'inventory':
+                    sampleData = `ProductID,Name,Category,Quantity,Price,LastStockDate
+P1001,Desk Chair,Furniture,45,129.99,15-06-2023
+P1002,Wireless Mouse,Electronics,120,24.99,2023/06/10
+P1003,Notebook,Office,200,4.99,20-05-2023
+P1004,Monitor Stand,Electronics,35,49.99,2023/05/15
+P1005,Desk Lamp,Furniture,60,39.99,10-04-2023
+P1006,Keyboard,Electronics,85,59.99,2023/04/05
+P1007,File Organizer,Office,150,12.99,25-03-2023
+P1008,Office Plant,Furniture,30,29.99,2023/03/10
+P1009,USB Hub,Electronics,95,19.99,15-02-2023
+P1010,Stapler,Office,180,8.99,2023/02/01`;
+                    fileName = 'sample_inventory_data.csv';
+                    break;
+            }
+
+            // Create a blob and trigger download
+            const blob = new Blob([sampleData], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+
+            // Create a temporary file input and set the file
+            const fileInput = document.getElementById('fileInput');
+            const file = new File([blob], fileName, { type: 'text/csv' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+
+            // Trigger the change event to update the UI
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+
+            // Show success message
+            const alertHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Sample dataset "${fileName}" loaded successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            document.querySelector('.container').insertAdjacentHTML('afterbegin', alertHTML);
+        }
+
+        // Form validation
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        // Theme switcher
+        const themeSwitch = document.getElementById('themeSwitch');
+        themeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+                this.nextElementSibling.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+                this.nextElementSibling.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            }
+        });
+
+        // Initialize tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Animation on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeElements.forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

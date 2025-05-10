@@ -2,38 +2,70 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Task Status</h2>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header gradient-bg text-white">
+                <h4 class="mb-0"><i class="bi bi-hourglass-split me-2"></i>Processing Status</h4>
             </div>
-            <div class="card-body">
-                <div class="progress mb-3">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                         role="progressbar" style="width: 100%"></div>
+            <div class="card-body text-center py-4">
+                {% if task.state == 'PENDING' %}
+                <div class="mb-4">
+                    <i class="bi bi-hourglass-top text-primary" style="font-size: 3rem;"></i>
                 </div>
-                
-                <div id="task-info">
-                    <p><strong>Status:</strong> <span id="task-state">{{ task.state }}</span></p>
-                    <p><strong>Message:</strong> <span id="task-status">{{ task.status }}</span></p>
-                    
-                    {% if task.state == 'FAILURE' %}
-                        <div class="alert alert-danger">
-                            {{ task.status }}
-                        </div>
-                        <a href="{{ url_for('index') }}" class="btn btn-primary">Try Again</a>
+                <h3 class="mb-3">Your file is in queue</h3>
+                <p class="text-muted">Processing will begin shortly...</p>
+                <div class="progress mt-4" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 30%"></div>
+                </div>
+                {% elif task.state == 'PROGRESS' %}
+                <div class="mb-4">
+                    <i class="bi bi-gear-wide-connected text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="mb-3">Processing your file</h3>
+                <p class="text-muted">{{ task.info.status }}</p>
+                <div class="progress mt-4" style="height: 10px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 70%"></div>
+                </div>
+                {% elif task.state == 'SUCCESS' %}
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="mb-3">Processing Complete!</h3>
+                <p class="text-muted">Your file has been successfully cleaned.</p>
+                <a href="{{ url_for('download', filename=task.result) }}" class="btn btn-success btn-lg mt-3">
+                    <i class="bi bi-download me-2"></i>Download Cleaned File
+                </a>
+                {% else %}
+                <div class="mb-4">
+                    <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="mb-3">Processing Failed</h3>
+                <p class="text-muted">{{ task.info }}</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">
+                    <i class="bi bi-arrow-left me-2"></i>Try Again
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Task ID: {{ task_id }}</small>
+                    {% if task.state in ['PENDING', 'PROGRESS'] %}
+                    <button class="btn btn-sm btn-outline-primary" onclick="window.location.reload()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                    </button>
                     {% endif %}
                 </div>
-                
-                {% if task.state == 'PROGRESS' or task.state == 'PENDING' %}
-                <script>
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 2000);
-                </script>
-                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+{% if task.state in ['PENDING', 'PROGRESS'] %}
+<script>
+    // Auto-refresh every 5 seconds for pending/progress tasks
+    setTimeout(function() {
+        window.location.reload();
+    }, 5000);
+</script>
+{% endif %}
 {% endblock %}

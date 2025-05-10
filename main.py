@@ -78,85 +78,122 @@ class DataCleaner:
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         """Initialize with optional configuration."""
         self.config = config or {
-            "outlier_contamination": 0.05,
+            "outlier_contamination": 0.01,
             "impute_strategy": "knn",
-            "date_formats": ["%Y-%m-%d", "%m/%d/%Y", "%d-%m-%Y"],
+            "date_formats": ["%Y-%m-%d", "%m/%d/%Y", "%d-%m-%Y", "%d-%b-%y"],
             "text_columns": None,
-            "numeric_columns": None
+            "numeric_columns": None,
+            "categorical_columns": None,  # New: explicitly specify categorical columns
+            "protect_columns": ["id"],
+            "drop_threshold": 0.5
         }
-        # Ensure all expected keys exist
-        self.config.setdefault("text_columns", None)
-        self.config.setdefault("numeric_columns", None)
         self._validate_config()
-
     def _validate_config(self):
         """Validate configuration parameters."""
-        if not 0 <= self.config.get("outlier_contamination", 0.05) <= 0.5:
-            raise ValueError("Contamination should be between 0 and 0.5")
+        contamination = self.config.get("outlier_contamination", 0.01)
+        if not isinstance(contamination, (int, float)) or not 0 <= contamination <= 0.5:
+            raise ValueError("Contamination should be a number between 0 and 0.5")
 
         valid_strategies = ["mean", "median", "knn", "drop"]
         if self.config.get("impute_strategy") not in valid_strategies:
             raise ValueError(f"Invalid impute strategy. Use one of {valid_strategies}")
 
+        drop_threshold = self.config.get("drop_threshold", 0.5)
+        if not isinstance(drop_threshold, (int, float)) or not 0 <= drop_threshold <= 1:
+            raise ValueError("Drop threshold should be between 0 and 1")
     def load_data(self, file_path: Union[str, Path]) -> pd.DataFrame:
         """Load data from various formats with robust error handling."""
         file_path = Path(file_path)
-        if not file_path.exists():
-            raise FileNotFoundError(f"File not found: {file_path}")
-
         try:
             if file_path.suffix.lower() == '.csv':
                 df = pd.read_csv(file_path, low_memory=False)
             elif file_path.suffix.lower() in ('.xlsx', '.xls'):
                 df = pd.read_excel(file_path)
             elif file_path.suffix.lower() == '.json':
-                with open(file_path, 'r') as f:
-                    data = json.load(f)
-                df = pd.json_normalize(data)
+                df = pd.read_json(file_path)
             else:
                 raise ValueError(f"Unsupported file format: {file_path.suffix}")
 
-            logger.info(f"Successfully loaded data from {file_path}. Columns: {df.columns.tolist()}")
-            logger.info(f"Data types:\n{df.dtypes}")
+            logger.info(f"Loaded {len(df)} rows from {file_path}")
             return df
 
         except Exception as e:
             logger.error(f"Error loading {file_path}: {str(e)}")
             raise
 
+    def _get_categorical_columns(self, df: pd.DataFrame) -> list:
+        """Get categorical columns, either from config or auto-detected."""
+        if df.empty:
+            return []
+
+        if self.config.get("categorical_columns"):
+            return [col for col in self.config["categorical_columns"] if col in df.columns]
+
+        # Auto-detect: text columns with less than 50 unique values
+        text_cols = self._get_text_columns(df)
+        return [col for col in text_cols
+                if len(df[col].dropna().unique()) < 50 and len(df[col].dropna().unique()) > 1]
+
+    def _get_categorical_columns(self, df: pd.DataFrame) -> list:
+        """Get categorical columns, either from config or auto-detected."""
+        if df.empty:
+            return []
+
+        if self.config.get("categorical_columns"):
+            return [col for col in self.config["categorical_columns"] if col in df.columns]
+
+        # Auto-detect: text columns with less than 50 unique values
+        text_cols = self._get_text_columns(df)
+        return [col for col in text_cols
+                if len(df[col].dropna().unique()) < 50 and len(df[col].dropna().unique()) > 1]
+
     def handle_missing_values(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Automatically handle missing values based on configuration."""
-        if df.empty or df.isnull().sum().sum() == 0:
-            logger.info("No missing values detected")
+        """Handle missing values with mode imputation for categorical data."""
+        if df.empty:
             return df
 
-        # Create a copy to avoid SettingWithCopyWarning
-        df = df.copy()
-
         strategy = self.config.get("impute_strategy", "knn")
-        logger.info(f"Handling missing values using {strategy} strategy")
-
-        numeric_cols = self._get_numeric_columns(df)
-        text_cols = self._get_text_columns(df)
+        protected = self.config.get("protect_columns", [])
+        drop_threshold = self.config.get("drop_threshold", 0.5)
 
         if strategy == "drop":
-            return df.dropna()
-        elif strategy in ["mean", "median"] and numeric_cols:
-            for col in numeric_cols:
-                if strategy == "mean":
-                    df[col] = df[col].fillna(df[col].mean())
-                else:
-                    df[col] = df[col].fillna(df[col].median())
+            threshold = int(len(df.columns) * drop_threshold)
+            df_clean = df.dropna(thresh=threshold)
+            logger.info(f"Dropped {len(df) - len(df_clean)} rows with missing values")
+            return df_clean
+
+        df = df.copy()
+
+        # 1. First handle categorical columns with mode imputation
+        categorical_cols = [col for col in self._get_categorical_columns(df)
+                            if col not in protected]
+
+        for col in categorical_cols:
+            mode_val = df[col].mode()
+            if not mode_val.empty:
+                df[col] = df[col].fillna(mode_val[0])
+            else:
+                df[col] = df[col].fillna('Unknown')
+
+        # 2. Then handle numeric columns based on strategy
+        numeric_cols = [col for col in self._get_numeric_columns(df)
+                        if col not in protected and col not in categorical_cols]
+
+        if strategy == "mean" and numeric_cols:
+            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
+        elif strategy == "median" and numeric_cols:
+            df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())
         elif strategy == "knn" and numeric_cols:
             try:
-                imputer = KNNImputer(n_neighbors=5)
+                imputer = KNNImputer(n_neighbors=3)
                 df[numeric_cols] = imputer.fit_transform(df[numeric_cols])
-            except ValueError as e:
-                logger.warning(f"KNN imputation failed: {str(e)}. Falling back to mean imputation.")
-                for col in numeric_cols:
-                    df[col] = df[col].fillna(df[col].mean())
+            except Exception:
+                df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())
 
-        # Handle text columns
+        # 3. Finally handle remaining text columns (non-categorical)
+        text_cols = [col for col in self._get_text_columns(df)
+                     if col not in protected and col not in categorical_cols]
+
         for col in text_cols:
             mode_val = df[col].mode()
             df[col] = df[col].fillna(mode_val[0] if not mode_val.empty else 'Unknown')
@@ -164,184 +201,169 @@ class DataCleaner:
         return df
 
     def detect_outliers(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        """Detect outliers using machine learning approach."""
-        numeric_cols = self._get_numeric_columns(df)
-        if not numeric_cols or len(df) == 0:
-            logger.warning("No numeric columns or empty dataframe for outlier detection")
+        """More lenient outlier detection using Isolation Forest."""
+        numeric_cols = [col for col in self._get_numeric_columns(df)
+                        if col not in self.config.get("protect_columns", [])]
+
+        if not numeric_cols:
             return df, pd.DataFrame()
 
         try:
+            contamination = min(self.config.get("outlier_contamination", 0.01), 0.1)
             clf = IsolationForest(
-                contamination=min(self.config.get("outlier_contamination", 0.05), 0.5),
-                random_state=42
+                contamination=contamination,
+                random_state=42,
+                behaviour='new'
             )
-            outliers = clf.fit_predict(df[numeric_cols])
+
+            # Convert to numeric, handling errors
+            numeric_data = df[numeric_cols].apply(pd.to_numeric, errors='coerce')
+            outliers = clf.fit_predict(numeric_data.fillna(numeric_data.median()))
             outlier_mask = outliers == -1
 
-            clean_df = df[~outlier_mask]
-            outliers_df = df[outlier_mask]
+            # Replace outliers with median instead of removing
+            clean_df = df.copy()
+            for col in numeric_cols:
+                col_median = numeric_data[col].median()
+                clean_df[col] = np.where(outlier_mask, col_median, df[col])
 
-            logger.info(f"Detected {len(outliers_df)} outliers")
+            outliers_df = df[outlier_mask]
+            logger.info(f"Adjusted {len(outliers_df)} outlier values")
             return clean_df, outliers_df
+
         except Exception as e:
             logger.error(f"Outlier detection failed: {str(e)}")
             return df, pd.DataFrame()
 
     def standardize_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Standardize data formats including text case and date formats."""
+        """More forgiving data standardization."""
         if df.empty:
             return df
 
-        # Create a copy to avoid SettingWithCopyWarning
         df = df.copy()
+        protected = self.config.get("protect_columns", [])
 
-        # Standardize text columns to lowercase
-        text_cols = self._get_text_columns(df)
+        # Text columns
+        text_cols = [col for col in self._get_text_columns(df)
+                     if col not in protected]
         for col in text_cols:
-            df[col] = df[col].astype(str).str.lower()
+            df[col] = df[col].astype(str).str.lower().str.strip()
 
-        # Standardize date columns - more careful handling
+        # Date columns
         date_cols = []
         for col in df.columns:
+            if col in protected or col in self._get_numeric_columns(df):
+                continue
             try:
                 if self._is_date_column(df[col]):
                     date_cols.append(col)
-            except Exception as e:
-                logger.warning(f"Could not check date format for column {col}: {str(e)}")
+            except Exception:
                 continue
 
         for col in date_cols:
-            try:
-                df[col] = df[col].apply(lambda x: self._parse_date(str(x)) if pd.notna(x) else x)
-            except Exception as e:
-                logger.warning(f"Could not standardize dates in column {col}: {str(e)}")
+            df[col] = df[col].apply(self._safe_parse_date)
 
         return df
 
-    def _parse_date(self, date_val: Any) -> Optional[datetime]:
-        """Parse date from various formats to standard format."""
-        if pd.isna(date_val) or not str(date_val).strip():
-            return None
+    def _safe_parse_date(self, val: Any) -> Any:
+        """Parse dates while preserving original value on failure."""
+        if pd.isna(val):
+            return val
 
         try:
-            if isinstance(date_val, (datetime, pd.Timestamp)):
-                return date_val
-            return parse_date(str(date_val))
-        except (ValueError, TypeError):
-            # Skip logging for obviously non-date strings
-            if not any(c.isdigit() for c in str(date_val)):
-                return None
-            logger.debug(f"Could not parse date: {date_val}")
-            return None
+            parsed = parse_date(str(val), fuzzy=True)
+            return parsed.strftime('%Y-%m-%d') if parsed else val
+        except Exception:
+            return val
 
     def _is_date_column(self, series: pd.Series) -> bool:
-        """Check if a column contains date values."""
+        """More conservative date detection."""
         if is_numeric_dtype(series):
             return False
 
-        try:
-            sample = series.dropna().sample(min(5, len(series))) if not series.empty else pd.Series()
-            if sample.empty:
-                return False
-
-            date_count = 0
-            for val in sample:
-                try:
-                    if pd.notna(val) and self._parse_date(str(val)) is not None:
-                        date_count += 1
-                except (ValueError, TypeError):
-                    continue
-
-            return (date_count / len(sample)) > 0.5  # Lower threshold to 50%
-        except Exception as e:
-            logger.warning(f"Date detection failed for column: {str(e)}")
+        sample = series.dropna().sample(min(5, len(series))) if not series.empty else pd.Series()
+        if sample.empty:
             return False
+
+        date_count = 0
+        for val in sample:
+            try:
+                if pd.notna(val) and any(sep in str(val) for sep in ['-', '/', '.']):
+                    if self._safe_parse_date(val) != val:
+                        date_count += 1
+            except Exception:
+                continue
+
+        return (date_count / len(sample)) > 0.6  # 60% threshold
 
     def _get_numeric_columns(self, df: pd.DataFrame) -> list:
         """Get numeric columns, either from config or auto-detected."""
-        if not df.empty:
-            if self.config.get("numeric_columns"):
-                return [col for col in self.config["numeric_columns"] if col in df.columns]
-            return df.select_dtypes(include=np.number).columns.tolist()
-        return []
+        if df.empty:
+            return []
+
+        if self.config.get("numeric_columns"):
+            return [col for col in self.config["numeric_columns"] if col in df.columns]
+        return df.select_dtypes(include=np.number).columns.tolist()
 
     def _get_text_columns(self, df: pd.DataFrame) -> list:
         """Get text columns, either from config or auto-detected."""
-        if not df.empty:
-            if self.config.get("text_columns"):
-                return [col for col in self.config["text_columns"] if col in df.columns]
-            return df.select_dtypes(include=['object']).columns.tolist()
-        return []
+        if df.empty:
+            return []
+
+        if self.config.get("text_columns"):
+            return [col for col in self.config["text_columns"] if col in df.columns]
+        return df.select_dtypes(include=['object']).columns.tolist()
+
+    def process_pipeline(self, input_path: Union[str, Path],
+                         output_path: Union[str, Path],
+                         output_format: Union[DataFormat, str] = DataFormat.CSV) -> Dict[str, Any]:
+        """Complete data processing pipeline with row preservation."""
+        stats = {'original_rows': 0, 'rows_after_cleaning': 0, 'status': 'failed'}
+
+        try:
+            df = self.load_data(input_path)
+            stats['original_rows'] = len(df)
+
+            # Handle missing values (preserves all rows)
+            df = self.handle_missing_values(df)
+
+            # Detect and adjust outliers (preserves all rows)
+            df, _ = self.detect_outliers(df)
+
+            # Standardize data (preserves all rows)
+            df = self.standardize_data(df)
+
+            self.export_data(df, output_path, output_format)
+            stats.update({
+                'rows_after_cleaning': len(df),
+                'status': 'success'
+            })
+            return stats
+
+        except Exception as e:
+            logger.error(f"Pipeline failed: {str(e)}")
+            stats['error'] = str(e)
+            return stats
 
     def export_data(self, df: pd.DataFrame, output_path: Union[str, Path],
                     format_type: Union[DataFormat, str]) -> None:
-        """Export cleaned data in specified format."""
-        output_path = Path(output_path)
-        if isinstance(format_type, str):
-            try:
-                format_type = DataFormat(format_type.lower())
-            except ValueError:
-                raise ValueError(f"Invalid format type: {format_type}")
-
+        """Export cleaned data."""
         try:
+            if isinstance(format_type, str):
+                format_type = DataFormat(format_type.lower())
+
             if format_type == DataFormat.CSV:
                 df.to_csv(output_path, index=False)
             elif format_type == DataFormat.EXCEL:
                 df.to_excel(output_path, index=False)
             elif format_type == DataFormat.JSON:
                 df.to_json(output_path, orient='records', indent=2)
-            logger.info(f"Data successfully exported to {output_path}")
+
         except Exception as e:
-            logger.error(f"Error exporting data: {str(e)}")
+            logger.error(f"Export failed: {str(e)}")
             raise
 
-    def process_pipeline(self, input_path: Union[str, Path],
-                         output_path: Union[str, Path],
-                         output_format: Union[DataFormat, str] = DataFormat.CSV) -> Dict[str, Any]:
-        """Complete data processing pipeline."""
-        stats = {
-            'original_rows': 0,
-            'original_columns': 0,
-            'rows_after_missing': 0,
-            'outliers_detected': 0,
-            'rows_after_outliers': 0,
-            'status': 'failed',
-            'error': None
-        }
-
-        try:
-            # Load data
-            df = self.load_data(input_path)
-            stats['original_rows'] = len(df)
-            stats['original_columns'] = len(df.columns)
-
-            # Handle missing values
-            df = self.handle_missing_values(df)
-            stats['rows_after_missing'] = len(df)
-
-            # Detect and handle outliers
-            clean_df, outliers_df = self.detect_outliers(df)
-            stats['outliers_detected'] = len(outliers_df)
-            stats['rows_after_outliers'] = len(clean_df)
-
-            # Standardize data
-            clean_df = self.standardize_data(clean_df)
-
-            # Export cleaned data
-            self.export_data(clean_df, output_path, output_format)
-
-            # Optionally export outliers
-            if not outliers_df.empty:
-                outlier_path = Path(output_path).with_stem(f"{Path(output_path).stem}_outliers")
-                self.export_data(outliers_df, outlier_path, output_format)
-
-            stats['status'] = 'success'
-            return stats
-
-        except Exception as e:
-            logger.error(f"Pipeline failed: {str(e)}", exc_info=True)
-            stats['error'] = str(e)
-            return stats
+    # [Rest of your Flask routes and Celery tasks remain exactly the same]
 
 
 @celery.task(bind=True)
@@ -386,9 +408,15 @@ def require_api_key(f):
     return decorated_function
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def landing():
+    """Show the marketing landing page"""
+    return render_template('landing.html')
+
+
+@app.route('/clean', methods=['GET', 'POST'])
 @limiter.limit("10 per minute")
-def index():
+def clean_data():
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -406,8 +434,15 @@ def index():
 
             file_size = os.path.getsize(upload_path)
 
+            # Validate and sanitize contamination input
+            try:
+                contamination = float(request.form.get('contamination', 0.05))
+                contamination = max(0.0, min(0.5, contamination))  # Ensure value is between 0 and 0.5
+            except (ValueError, TypeError):
+                contamination = 0.05  # Default value if parsing fails
+
             config = {
-                "outlier_contamination": float(request.form.get('contamination', 0.05)),
+                "outlier_contamination": contamination,
                 "impute_strategy": request.form.get('impute_strategy', 'knn'),
                 "output_format": request.form.get('output_format', 'csv')
             }
@@ -459,11 +494,23 @@ def api_clean():
     upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(upload_path)
 
+    # Validate and sanitize contamination input
     if request.is_json:
         config = request.get_json()
+        try:
+            if 'outlier_contamination' in config:
+                config['outlier_contamination'] = max(0.0, min(0.5, float(config['outlier_contamination'])))
+        except (ValueError, TypeError):
+            config['outlier_contamination'] = 0.05
     else:
+        try:
+            contamination = float(request.form.get('contamination', 0.05))
+            contamination = max(0.0, min(0.5, contamination))
+        except (ValueError, TypeError):
+            contamination = 0.05
+
         config = {
-            "outlier_contamination": float(request.form.get('contamination', 0.05)),
+            "outlier_contamination": contamination,
             "impute_strategy": request.form.get('impute_strategy', 'knn'),
             "output_format": request.form.get('output_format', 'csv')
         }
